@@ -1,0 +1,14 @@
+node_modules
+.next
+.medusa
+dist
+build
+coverage
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
+playwright-report
+test-results
+.DS_Store

@@ -1,0 +1,20 @@
+{
+  "name": "sentinel-market",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Automated Sentinel Prime tech marketplace built with Medusa.js, Next.js, and an AI deal scraper.",
+  "packageManager": "pnpm@9.12.3",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @sentinel-market/backend --filter @sentinel-market/storefront --filter @sentinel-market/scraper dev",
+    "dev:backend": "pnpm --filter @sentinel-market/backend dev",
+    "dev:storefront": "pnpm --filter @sentinel-market/storefront dev",
+    "dev:scraper": "pnpm --filter @sentinel-market/scraper dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20 <25",
+    "pnpm": ">=9"
+  }
+}

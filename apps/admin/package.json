@@ -1,0 +1,22 @@
+{
+  "name": "@sentinel-market/admin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Sentinel Market admin extension source. Runtime widgets are copied into apps/backend/src/admin.",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "dev": "tsc --watch --noEmit",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@medusajs/admin-sdk": "latest",
+    "@medusajs/ui": "latest",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "eslint": "^8.57.1",
+    "typescript": "^5.6.3"
+  }
+}

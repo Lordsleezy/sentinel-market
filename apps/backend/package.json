@@ -1,0 +1,37 @@
+{
+  "name": "@sentinel-market/backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "medusa build",
+    "db:setup": "medusa db:setup",
+    "dev": "medusa develop",
+    "lint": "tsc --noEmit",
+    "start": "medusa start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@medusajs/admin-sdk": "latest",
+    "@medusajs/admin-shared": "latest",
+    "@medusajs/dashboard": "latest",
+    "@medusajs/draft-order": "latest",
+    "@medusajs/framework": "latest",
+    "@medusajs/medusa": "latest",
+    "@medusajs/payment-stripe": "latest",
+    "@medusajs/ui": "latest",
+    "awilix": "^8.0.1",
+    "pg": "^8.13.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "eslint": "^8.57.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}
