@@ -1,9 +1,8 @@
-import { CronJob } from "cron"
 import { connectors } from "./connectors/index.js"
 import { config } from "./config.js"
 import { identifyBundleOpportunities } from "./services/bundles.js"
-import { listExistingCatalog, publishDeal } from "./services/medusa.js"
-import { evaluateDeal } from "./services/ollama.js"
+import { evaluateDeal } from "./services/scoring.js"
+import { listExistingCatalog, publishDeal } from "./services/supabase.js"
 import type { DealCandidate } from "./types.js"
 
 const runScrape = async () => {
@@ -17,8 +16,8 @@ const runScrape = async () => {
   console.log(`[scraper] found ${uniqueCandidates.length} unique candidates`)
 
   for (const candidate of uniqueCandidates) {
-    const evaluated = await evaluateDeal(candidate)
-    evaluated.bundleHints = identifyBundleOpportunities(evaluated, catalog)
+    const evaluated = evaluateDeal(candidate)
+    evaluated.bundleItemIds = identifyBundleOpportunities(evaluated, catalog)
 
     if (!evaluated.approved || evaluated.score < config.SCRAPER_MIN_SCORE) {
       console.log(`[scraper] skipped ${evaluated.title} score=${evaluated.score}`)
@@ -44,16 +43,7 @@ const dedupe = (deals: DealCandidate[]) => {
   })
 }
 
-if (process.argv.includes("--once")) {
-  runScrape().catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
-} else {
-  const job = new CronJob(config.SCRAPER_CRON, () => {
-    runScrape().catch((error) => console.error("[scraper] run failed", error))
-  })
-
-  job.start()
-  console.log(`[scraper] scheduled with ${config.SCRAPER_CRON}`)
-}
+runScrape().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

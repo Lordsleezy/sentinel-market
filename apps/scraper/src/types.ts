@@ -6,8 +6,11 @@ export type DealCandidate = {
   sourceUrl: string
   title: string
   price: number
+  averageMarketPrice?: number
   currency: string
   category: "laptop" | "desktop" | "component" | "accessory"
+  condition?: "new" | "excellent" | "good" | "fair" | "parts"
+  sellerRating?: number
   specs: Record<string, string | number | boolean>
   images: string[]
   inventoryQuantity?: number
@@ -18,12 +21,13 @@ export type EvaluatedDeal = DealCandidate & {
   approved: boolean
   generatedTitle: string
   generatedDescription: string
-  bundleHints: string[]
+  bundleItemIds: string[]
 }
 
 export type ExistingCatalogItem = {
   id: string
   title: string
   category?: string
+  price?: number
   specs?: Record<string, unknown>
 }

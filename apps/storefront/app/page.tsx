@@ -1,5 +1,5 @@
 import { Cpu, Search, ShoppingCart } from "lucide-react"
-import { listProducts } from "../components/medusa"
+import { listProducts } from "../components/api"
 
 export default async function Home() {
   const products = await listProducts()
@@ -50,7 +50,7 @@ export default async function Home() {
         </div>
         <div className="nav-links">
           <Search size={16} />
-          <span>Scored by qwen2.5:7b</span>
+          <span>Scored by market signals</span>
         </div>
       </div>
 

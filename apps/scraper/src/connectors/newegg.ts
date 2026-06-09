@@ -1,42 +1,56 @@
-import { chromium } from "playwright"
+import { fetch } from "undici"
+import { config } from "../config.js"
 import type { DealCandidate } from "../types.js"
 import type { SupplierConnector } from "./base.js"
 
 export const neweggConnector: SupplierConnector = {
   name: "newegg",
   async fetchDeals() {
-    const browser = await chromium.launch({ headless: true })
-    const page = await browser.newPage()
-
-    try {
-      await page.goto("https://www.newegg.com/p/pl?d=computer+parts", {
-        waitUntil: "domcontentloaded",
-        timeout: 45000,
-      })
-
-      return await page.locator(".item-cell").evaluateAll((items) =>
-        items.slice(0, 20).map((item) => {
-          const title = item.querySelector(".item-title")?.textContent?.trim() || ""
-          const sourceUrl = (item.querySelector(".item-title") as HTMLAnchorElement | null)?.href || ""
-          const image = (item.querySelector("img") as HTMLImageElement | null)?.src || ""
-          const priceText = item.querySelector(".price-current")?.textContent?.replace(/[^\d.]/g, "") || "0"
-
-          return {
-            supplier: "newegg",
-            sourceId: sourceUrl,
-            sourceUrl,
-            title,
-            price: Number(priceText),
-            currency: "USD",
-            category: title.toLowerCase().includes("dock") ? "accessory" : "component",
-            specs: {},
-            images: image ? [image] : [],
-            inventoryQuantity: 1,
-          }
-        })
-      ) as DealCandidate[]
-    } finally {
-      await browser.close()
+    if (!config.NEWEGG_API_KEY) {
+      return []
     }
+
+    const response = await fetch("https://api.newegg.com/marketplace/deals?category=computer-parts", {
+      headers: { Authorization: `Bearer ${config.NEWEGG_API_KEY}` },
+    })
+
+    if (!response.ok) return []
+
+    const payload = (await response.json()) as {
+      items?: Array<{
+        id?: string
+        title?: string
+        url?: string
+        price?: number
+        averagePrice?: number
+        image?: string
+        rating?: number
+        specs?: Record<string, string | number | boolean>
+      }>
+    }
+
+    return (payload.items || []).map((item) => ({
+      supplier: "newegg",
+      sourceId: String(item.id || item.url),
+      sourceUrl: String(item.url || ""),
+      title: String(item.title || ""),
+      price: Number(item.price || 0),
+      averageMarketPrice: Number(item.averagePrice || Number(item.price || 0) * 1.12),
+      currency: "USD",
+      category: inferCategory(String(item.title || "")),
+      condition: "new",
+      sellerRating: Number(item.rating || 95),
+      specs: item.specs || {},
+      images: item.image ? [item.image] : [],
+      inventoryQuantity: 1,
+    }))
   },
+}
+
+const inferCategory = (title: string): DealCandidate["category"] => {
+  const lower = title.toLowerCase()
+  if (lower.includes("laptop")) return "laptop"
+  if (lower.includes("desktop") || lower.includes("workstation")) return "desktop"
+  if (lower.includes("dock") || lower.includes("keyboard") || lower.includes("mouse")) return "accessory"
+  return "component"
 }

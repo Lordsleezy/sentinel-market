@@ -5,7 +5,7 @@ export const identifyBundleOpportunities = (
   catalog: ExistingCatalogItem[]
 ): string[] => {
   if (!["laptop", "desktop"].includes(deal.category)) {
-    return deal.bundleHints
+    return deal.bundleItemIds
   }
 
   const accessoryMatches = catalog.filter((item) => {
@@ -15,8 +15,5 @@ export const identifyBundleOpportunities = (
     )
   })
 
-  return [
-    ...deal.bundleHints,
-    ...accessoryMatches.slice(0, 3).map((item) => `Bundle with ${item.title} (${item.id})`),
-  ]
+  return [...deal.bundleItemIds, ...accessoryMatches.slice(0, 3).map((item) => item.id)]
 }

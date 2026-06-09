@@ -1,5 +1,6 @@
 node_modules
 .next
+.netlify
 .medusa
 dist
 build

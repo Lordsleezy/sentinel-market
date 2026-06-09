@@ -6,7 +6,7 @@ import type { SupplierConnector } from "./base.js"
 export const ebayConnector: SupplierConnector = {
   name: "ebay",
   async fetchDeals() {
-    if (!config.EBAY_CLIENT_ID) {
+    if (!config.EBAY_API_KEY) {
       return []
     }
 
@@ -15,7 +15,7 @@ export const ebayConnector: SupplierConnector = {
       `https://api.ebay.com/buy/browse/v1/item_summary/search?q=${query}&limit=25`,
       {
         headers: {
-          Authorization: `Bearer ${config.EBAY_CLIENT_ID}`,
+          Authorization: `Bearer ${config.EBAY_API_KEY}`,
           "X-EBAY-C-MARKETPLACE-ID": "EBAY_US",
         },
       }
@@ -32,6 +32,9 @@ export const ebayConnector: SupplierConnector = {
         itemWebUrl: string
         image?: { imageUrl?: string }
         price?: { value?: string; currency?: string }
+        itemLocation?: { country?: string }
+        seller?: { feedbackPercentage?: string }
+        condition?: string
       }>
     }
 
@@ -41,13 +44,26 @@ export const ebayConnector: SupplierConnector = {
       sourceUrl: item.itemWebUrl,
       title: item.title,
       price: Number(item.price?.value || 0),
+      averageMarketPrice: Number(item.price?.value || 0) * 1.18,
       currency: item.price?.currency || "USD",
       category: inferCategory(item.title),
+      condition: normalizeCondition(item.condition),
+      sellerRating: Number(item.seller?.feedbackPercentage || 0),
       specs: {},
       images: item.image?.imageUrl ? [item.image.imageUrl] : [],
       inventoryQuantity: 1,
     }))
   },
+}
+
+const normalizeCondition = (condition = ""): DealCandidate["condition"] => {
+  const lower = condition.toLowerCase()
+  if (lower.includes("new")) return "new"
+  if (lower.includes("excellent")) return "excellent"
+  if (lower.includes("good")) return "good"
+  if (lower.includes("fair")) return "fair"
+  if (lower.includes("parts")) return "parts"
+  return "good"
 }
 
 const inferCategory = (title: string): DealCandidate["category"] => {
