@@ -1,8 +1,15 @@
 import { createClient } from "@supabase/supabase-js"
 import { config } from "../config.js"
+import { scrapeExistingListing } from "./sentinelWeb.js"
 import type { EvaluatedDeal, ExistingCatalogItem } from "../types.js"
 
-const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_SERVICE_ROLE_KEY, {
+const supabaseKey = config.SUPABASE_SERVICE_ROLE_KEY || config.SUPABASE_ANON_KEY
+
+if (!supabaseKey) {
+  throw new Error("SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY is required for scraper writes")
+}
+
+const supabase = createClient(config.SUPABASE_URL, supabaseKey, {
   auth: {
     persistSession: false,
     autoRefreshToken: false,
@@ -12,7 +19,7 @@ const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_SERVICE_ROLE_
 export const listExistingCatalog = async (): Promise<ExistingCatalogItem[]> => {
   const { data, error } = await supabase
     .from("products")
-    .select("id,title,price,specs,supplier,bundle_items")
+    .select("id,title,price,specs,supplier,source_url,bundle_items,created_at")
     .order("created_at", { ascending: false })
     .limit(250)
 
@@ -26,6 +33,8 @@ export const listExistingCatalog = async (): Promise<ExistingCatalogItem[]> => {
     title: product.title,
     category: inferCategory(product.title, product.specs),
     price: Number(product.price || 0),
+    source_url: product.source_url,
+    created_at: product.created_at,
     specs: product.specs || {},
   }))
 }
@@ -67,6 +76,41 @@ export const publishDeal = async (deal: EvaluatedDeal) => {
 
   if (deal.bundleItemIds.length > 0) {
     await createBundle(deal, product.id)
+  }
+}
+
+export const recrawlStaleListings = async () => {
+  const staleCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const { data, error } = await supabase
+    .from("products")
+    .select("id,title,price,source_url,created_at")
+    .lt("created_at", staleCutoff)
+    .limit(50)
+
+  if (error) {
+    console.warn(`[supabase] stale listing read failed: ${error.message}`)
+    return
+  }
+
+  for (const product of data || []) {
+    if (!product.source_url) continue
+    try {
+      const refreshed = await scrapeExistingListing(product.source_url)
+      const current = refreshed.find((item) => item.source_url === product.source_url) || refreshed[0]
+
+      if (!current || /sold|unavailable|out of stock|ended/i.test(`${current.raw_text || ""} ${current.title || ""}`)) {
+        await supabase.from("products").delete().eq("id", product.id)
+        console.log(`[recrawl] removed sold/unavailable listing ${product.title}`)
+        continue
+      }
+
+      if (typeof current.price === "number" && Number(current.price) !== Number(product.price)) {
+        await supabase.from("products").update({ price: current.price }).eq("id", product.id)
+        console.log(`[recrawl] updated price ${product.title}: ${product.price} -> ${current.price}`)
+      }
+    } catch (error) {
+      console.warn(`[recrawl] failed ${product.source_url}:`, error)
+    }
   }
 }
 

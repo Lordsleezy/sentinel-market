@@ -41,9 +41,7 @@ jobs:
         run: pnpm --filter @sentinel-market/scraper scrape:once
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SCRAPER_MIN_SCORE: ${{ vars.SCRAPER_MIN_SCORE || '72' }}
-          EBAY_API_KEY: ${{ secrets.EBAY_API_KEY }}
-          NEWEGG_API_KEY: ${{ secrets.NEWEGG_API_KEY }}
-          CJ_ACCESS_TOKEN: ${{ secrets.CJ_ACCESS_TOKEN }}
-          BACK_MARKET_API_KEY: ${{ secrets.BACK_MARKET_API_KEY }}
+          SENTINEL_WEB_URL: ${{ secrets.SENTINEL_WEB_URL }}
