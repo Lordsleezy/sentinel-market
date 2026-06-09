@@ -1,5 +1,6 @@
-import { Cpu, Search, ShoppingCart } from "lucide-react"
+import { ArrowRight, Cpu } from "lucide-react"
 import { listProducts } from "../components/api"
+import { BuyButton } from "../components/BuyButton"
 
 export default async function Home() {
   const products = await listProducts()
@@ -13,43 +14,35 @@ export default async function Home() {
         </div>
         <div className="nav-links">
           <a href="/products">Products</a>
-          <a href="#parts">Parts</a>
-          <a href="#bundles">Bundles</a>
         </div>
       </nav>
 
       <section className="hero">
         <div>
-          <h1>Sentinel Prime tech deals.</h1>
+          <p className="eyebrow">Sentinel Prime storefront</p>
+          <h1>Sentinel Market</h1>
           <p>
-            Automated sourcing ranks computers, parts, and accessories by real specs, live price,
-            and bundle fit before they hit the catalog.
+            A clean, curated marketplace for computers, parts, and practical upgrades from Sentinel Prime.
           </p>
+          <a className="hero-link" href="/products">
+            Browse products
+            <ArrowRight size={18} />
+          </a>
         </div>
-        <aside className="hero-panel" aria-label="Live sourcing summary">
-          {[
-            ["eBay workstation pull", "91"],
-            ["Back Market ultrabook", "86"],
-            ["Newegg GPU clearance", "82"],
-            ["CJ accessory bundle", "78"],
-          ].map(([label, score]) => (
-            <div className="scan-row" key={label}>
-              <span>{label}</span>
-              <span className="score">{score}</span>
-            </div>
-          ))}
+        <aside className="hero-panel" aria-label="Storefront status">
+          <div className="status-card">
+            <span className="status-dot" />
+            <h2>Catalog ready</h2>
+            <p>Products added in Supabase will appear here automatically and checkout through Stripe.</p>
+          </div>
         </aside>
       </section>
 
       <div className="toolbar">
         <div className="tabs">
-          <span>Best value</span>
-          <span>Newest</span>
-          <span>Bundles</span>
-        </div>
-        <div className="nav-links">
-          <Search size={16} />
-          <span>Scored by market signals</span>
+          <span>Featured</span>
+          <span>Systems</span>
+          <span>Parts</span>
         </div>
       </div>
 
@@ -58,21 +51,19 @@ export default async function Home() {
           products.map((product) => (
             <article className="card" key={product.id}>
               <div className="image">
-                <Cpu size={44} />
+                {product.images?.[0] ? <img alt="" src={product.images[0]} /> : <Cpu size={44} />}
               </div>
               <h2>{product.title}</h2>
               <div className="meta">{product.description}</div>
-              <button className="buy" type="button">
-                <ShoppingCart size={16} />
-                View deal
-              </button>
+              {typeof product.price === "number" && <div className="price">${product.price.toFixed(2)}</div>}
+              <BuyButton disabled={typeof product.price !== "number"} productId={product.id} />
             </article>
           ))
         ) : (
           <section className="empty-state" aria-label="No products available">
             <Cpu size={42} />
-            <h2>Products coming soon, check back shortly</h2>
-            <p>Sentinel Market is connected and waiting for the first approved scraper run.</p>
+            <h2>No products yet, check back soon</h2>
+            <p>Sentinel Market is live and ready. The first approved listings will appear here automatically.</p>
           </section>
         )}
       </section>

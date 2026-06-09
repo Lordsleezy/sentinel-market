@@ -16,14 +16,6 @@ export const supabaseAdmin = () =>
     },
   })
 
-export const supabaseAuth = () =>
-  createClient(supabaseUrl, anonKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  })
-
 export const json = (statusCode, body) => ({
   statusCode,
   headers: {
@@ -34,20 +26,3 @@ export const json = (statusCode, body) => ({
   },
   body: JSON.stringify(body),
 })
-
-export const requirePaul = async (event) => {
-  const authHeader = event.headers.authorization || event.headers.Authorization || ""
-  const token = authHeader.replace(/^Bearer\s+/i, "")
-
-  if (!token) {
-    return { error: json(401, { error: "Missing Supabase bearer token" }) }
-  }
-
-  const { data, error } = await supabaseAuth().auth.getUser(token)
-
-  if (error || data.user?.email !== "paul@sentinelprime.org") {
-    return { error: json(403, { error: "Admin access denied" }) }
-  }
-
-  return { user: data.user }
-}

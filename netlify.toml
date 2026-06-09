@@ -22,11 +22,6 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-[[redirects]]
-  from = "/admin-dashboard"
-  to = "/.netlify/functions/admin-dashboard"
-  status = 200
-
 [[headers]]
   for = "/*"
   [headers.values]

@@ -3,7 +3,7 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: "Sentinel Market",
-  description: "AI-ranked computers, parts, and bundles from Sentinel Prime.",
+  description: "Sentinel Prime computers, parts, and upgrades with secure Stripe checkout.",
   metadataBase: new URL(process.env.MARKET_DOMAIN || "https://market.sentinelprime.org"),
 }
 

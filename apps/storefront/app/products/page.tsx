@@ -1,5 +1,6 @@
-import { Cpu, ShoppingCart } from "lucide-react"
+import { Cpu } from "lucide-react"
 import { listProducts } from "../../components/api"
+import { BuyButton } from "../../components/BuyButton"
 
 export const metadata = {
   title: "Products | Sentinel Market",
@@ -24,7 +25,7 @@ export default async function ProductsPage() {
 
       <section className="catalog-header">
         <h1>Products</h1>
-        <p>Approved systems, parts, and bundles sourced for Sentinel Prime.</p>
+        <p>Sentinel Prime computers, parts, and upgrades ready for secure Stripe checkout.</p>
       </section>
 
       <section className="grid catalog-grid">
@@ -32,24 +33,21 @@ export default async function ProductsPage() {
           products.map((product) => (
             <article className="card" key={product.id}>
               <div className="image">
-                <Cpu size={44} />
+                {product.images?.[0] ? <img alt="" src={product.images[0]} /> : <Cpu size={44} />}
               </div>
               <h2>{product.title}</h2>
               <div className="meta">
                 {product.description || "Specs and fulfillment notes are being prepared."}
               </div>
               {typeof product.price === "number" && <div className="price">${product.price.toFixed(2)}</div>}
-              <button className="buy" type="button">
-                <ShoppingCart size={16} />
-                View deal
-              </button>
+              <BuyButton disabled={typeof product.price !== "number"} productId={product.id} />
             </article>
           ))
         ) : (
           <section className="empty-state" aria-label="No products available">
             <Cpu size={42} />
-            <h2>Products coming soon, check back shortly</h2>
-            <p>The catalog is ready. New listings will appear here after the scheduled scraper approves deals.</p>
+            <h2>No products yet, check back soon</h2>
+            <p>The storefront is connected. New Sentinel Market listings will appear here as soon as they are approved.</p>
           </section>
         )}
       </section>

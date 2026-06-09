@@ -8,6 +8,7 @@
   --teal: #1ee6c5;
   --teal-soft: rgba(30, 230, 197, 0.16);
   --line: rgba(238, 247, 245, 0.12);
+  --danger: #ff7d7d;
 }
 
 * {
@@ -81,12 +82,33 @@ button {
   max-width: 880px;
 }
 
+.eyebrow {
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+}
+
 .hero p {
   color: var(--muted);
   font-size: 18px;
   line-height: 1.6;
   margin: 0;
   max-width: 620px;
+}
+
+.hero-link {
+  align-items: center;
+  background: var(--teal);
+  border-radius: 6px;
+  color: #031211;
+  display: inline-flex;
+  font-weight: 800;
+  gap: 10px;
+  margin-top: 26px;
+  padding: 12px 16px;
 }
 
 .hero-panel {
@@ -97,21 +119,34 @@ button {
   padding: 22px;
 }
 
-.scan-row {
-  align-items: center;
-  border-bottom: 1px solid var(--line);
+.status-card {
+  align-items: flex-start;
   display: flex;
-  justify-content: space-between;
-  padding: 16px 0;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-end;
 }
 
-.scan-row:last-child {
-  border-bottom: 0;
+.status-card h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  letter-spacing: 0;
+  line-height: 1;
+  margin: 18px 0 12px;
 }
 
-.score {
-  color: var(--teal);
-  font-weight: 700;
+.status-card p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 360px;
+}
+
+.status-dot {
+  background: var(--teal);
+  border-radius: 999px;
+  box-shadow: 0 0 24px rgba(30, 230, 197, 0.45);
+  height: 14px;
+  width: 14px;
 }
 
 .toolbar {
@@ -187,6 +222,14 @@ button {
   height: 150px;
   justify-content: center;
   margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.image img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .card h2 {
@@ -225,6 +268,18 @@ button {
   width: 100%;
 }
 
+.buy:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.checkout-error {
+  color: var(--danger);
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 8px 0 0;
+}
+
 .empty-state {
   align-items: center;
   background: var(--panel);
@@ -252,6 +307,35 @@ button {
   line-height: 1.6;
   margin: 0;
   max-width: 540px;
+}
+
+.success-state {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 73px);
+  padding: 48px 22px;
+  text-align: center;
+}
+
+.success-state svg {
+  color: var(--teal);
+}
+
+.success-state h1 {
+  color: var(--text);
+  font-size: clamp(36px, 7vw, 72px);
+  letter-spacing: 0;
+  line-height: 1;
+  margin: 20px 0 12px;
+}
+
+.success-state p {
+  line-height: 1.6;
+  margin: 0;
+  max-width: 520px;
 }
 
 @media (max-width: 980px) {

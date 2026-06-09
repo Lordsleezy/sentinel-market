@@ -2,22 +2,22 @@
   "name": "sentinel-market",
   "private": true,
   "version": "0.1.0",
-  "description": "Automated Sentinel Prime tech marketplace built with Netlify, Next.js, Supabase, and a scheduled deal scraper.",
+  "description": "Sentinel Prime tech marketplace storefront built with Netlify, Next.js, Supabase, and Stripe.",
   "packageManager": "pnpm@9.12.3",
   "scripts": {
-    "dev": "pnpm --parallel --filter @sentinel-market/storefront --filter @sentinel-market/scraper dev",
-    "dev:storefront": "pnpm --filter @sentinel-market/storefront dev",
-    "dev:scraper": "pnpm --filter @sentinel-market/scraper dev",
-    "build": "pnpm -r build",
-    "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck"
+    "dev": "corepack pnpm --filter @sentinel-market/storefront dev",
+    "dev:storefront": "corepack pnpm --filter @sentinel-market/storefront dev",
+    "build": "corepack pnpm --filter @sentinel-market/storefront build",
+    "lint": "corepack pnpm --filter @sentinel-market/storefront lint",
+    "typecheck": "corepack pnpm --filter @sentinel-market/storefront typecheck"
   },
   "engines": {
     "node": ">=20 <25",
     "pnpm": ">=9"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.6"
+    "@supabase/supabase-js": "^2.45.6",
+    "stripe": "^17.4.0"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.8.1"
