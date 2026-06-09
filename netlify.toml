@@ -5,7 +5,14 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  SITE_URL = "https://market.sentinelprime.org"
   NEXT_PUBLIC_SITE_URL = "https://market.sentinelprime.org"
+  NEXT_PUBLIC_API_BASE_URL = "https://market.sentinelprime.org/.netlify/functions"
+
+[context.production.environment]
+  SITE_URL = "https://market.sentinelprime.org"
+  NEXT_PUBLIC_SITE_URL = "https://market.sentinelprime.org"
+  NEXT_PUBLIC_API_BASE_URL = "https://market.sentinelprime.org/.netlify/functions"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -20,7 +27,9 @@
   to = "/.netlify/functions/admin-dashboard"
   status = 200
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

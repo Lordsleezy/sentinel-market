@@ -2,6 +2,8 @@ export type StoreProduct = {
   id: string
   title: string
   description?: string | null
+  price?: number | null
+  supplier?: string | null
 }
 
 export const listProducts = async (): Promise<StoreProduct[]> => {
@@ -26,6 +28,8 @@ export const listProducts = async (): Promise<StoreProduct[]> => {
       id: product.id,
       title: product.title,
       description: product.description,
+      price: product.price,
+      supplier: product.supplier,
     }))
   } catch {
     return []

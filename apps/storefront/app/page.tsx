@@ -3,7 +3,6 @@ import { listProducts } from "../components/api"
 
 export default async function Home() {
   const products = await listProducts()
-  const displayProducts = products.length ? products : fallbackProducts
 
   return (
     <main className="shell">
@@ -13,7 +12,7 @@ export default async function Home() {
           <span>Sentinel Market</span>
         </div>
         <div className="nav-links">
-          <a href="#systems">Systems</a>
+          <a href="/products">Products</a>
           <a href="#parts">Parts</a>
           <a href="#bundles">Bundles</a>
         </div>
@@ -55,43 +54,28 @@ export default async function Home() {
       </div>
 
       <section className="grid" id="systems">
-        {displayProducts.map((product) => (
-          <article className="card" key={product.id}>
-            <div className="image">
-              <Cpu size={44} />
-            </div>
-            <h2>{product.title}</h2>
-            <div className="meta">{product.description}</div>
-            <button className="buy" type="button">
-              <ShoppingCart size={16} />
-              View deal
-            </button>
-          </article>
-        ))}
+        {products.length > 0 ? (
+          products.map((product) => (
+            <article className="card" key={product.id}>
+              <div className="image">
+                <Cpu size={44} />
+              </div>
+              <h2>{product.title}</h2>
+              <div className="meta">{product.description}</div>
+              <button className="buy" type="button">
+                <ShoppingCart size={16} />
+                View deal
+              </button>
+            </article>
+          ))
+        ) : (
+          <section className="empty-state" aria-label="No products available">
+            <Cpu size={42} />
+            <h2>Products coming soon, check back shortly</h2>
+            <p>Sentinel Market is connected and waiting for the first approved scraper run.</p>
+          </section>
+        )}
       </section>
     </main>
   )
 }
-
-const fallbackProducts = [
-  {
-    id: "fallback-1",
-    title: "ThinkPad T14 Gen 3 bundle",
-    description: "Ryzen 7, 32 GB RAM, 1 TB NVMe, dock-ready accessory match.",
-  },
-  {
-    id: "fallback-2",
-    title: "RTX creator tower refresh",
-    description: "i7 workstation, RTX graphics, high value score from refreshed parts.",
-  },
-  {
-    id: "fallback-3",
-    title: "Back Market ultrabook",
-    description: "Grade A compact laptop with charger and sleeve bundle opportunity.",
-  },
-  {
-    id: "fallback-4",
-    title: "Newegg storage upgrade kit",
-    description: "NVMe drive and USB-C enclosure paired for laptop upgrade carts.",
-  },
-]
