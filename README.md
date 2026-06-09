@@ -1,13 +1,13 @@
 # Sentinel Market
 
-Sentinel Market is the Netlify-ready storefront for Sentinel Prime. It uses Next.js for the public catalog, Netlify Functions for API and checkout endpoints, Supabase for products and orders, and Stripe Checkout for payments.
+Sentinel Market is the Netlify-ready storefront for Sentinel Prime. It uses Next.js for the public catalog, Medusa v2 for products and carts, Netlify Functions for API and checkout endpoints, and Stripe Checkout for payments.
 
 ## What Ships
 
 - `apps/storefront` - Next.js storefront for `https://market.sentinelprime.org`.
-- `netlify/functions/products.mjs` - reads product listings from Supabase.
-- `netlify/functions/create-checkout.mjs` - creates Stripe Checkout sessions.
-- `netlify/functions/stripe-webhook.mjs` - records completed Stripe orders in Supabase.
+- `netlify/functions/products.mjs` - reads product listings from Medusa Store API.
+- `netlify/functions/create-checkout.mjs` - creates a Medusa cart, then opens Stripe Checkout.
+- `netlify/functions/stripe-webhook.mjs` - records completed Stripe orders (optional Supabase logging).
 - `supabase/schema.sql` - products, orders, bundles, and deals schema.
 
 The scraper and automation workflow are intentionally removed from this deployment path. This repo is focused on a clean storefront that can go live on Netlify.
@@ -18,18 +18,21 @@ Copy `.env.example` locally and add the same values in Netlify:
 
 - `SITE_URL=https://market.sentinelprime.org`
 - `MARKET_DOMAIN=https://market.sentinelprime.org`
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `MEDUSA_API_URL=https://legion.sentinelprime.org`
+- `MEDUSA_PUBLISHABLE_KEY` (Medusa publishable key for Store API)
 - `STRIPE_PUBLISHABLE_KEY`
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
 - `NEXT_PUBLIC_API_BASE_URL=https://market.sentinelprime.org/.netlify/functions`
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 
-Keep `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, and `STRIPE_WEBHOOK_SECRET` server-side only. Do not expose them in `NEXT_PUBLIC_*` variables.
+Optional legacy order logging:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+Keep `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` server-side only. Do not expose them in `NEXT_PUBLIC_*` variables.
 
 ## Supabase Setup
 
