@@ -1,4 +1,6 @@
+import Link from "next/link"
 import { CheckCircle2 } from "lucide-react"
+import { Footer } from "../../../components/Footer"
 
 export const metadata = {
   title: "Checkout complete | Sentinel Market",
@@ -9,24 +11,26 @@ export default function CheckoutSuccessPage() {
   return (
     <main className="shell">
       <nav className="nav">
-        <a className="brand" href="/">
+        <Link className="brand" href="/">
           <span className="mark" />
           <span>Sentinel Market</span>
-        </a>
+        </Link>
         <div className="nav-links">
-          <a href="/">Home</a>
-          <a href="/products">Products</a>
+          <Link href="/">Home</Link>
+          <Link href="/products">Products</Link>
         </div>
       </nav>
 
       <section className="success-state">
         <CheckCircle2 size={48} />
         <h1>Payment received</h1>
-        <p>Your order has been recorded and is queued for Sentinel Prime fulfillment.</p>
-        <a className="hero-link" href="/products">
+        <p>Your Medusa cart has been paid through Stripe and is queued for Sentinel Prime fulfillment.</p>
+        <Link className="hero-link" href="/products">
           Back to products
-        </a>
+        </Link>
       </section>
+
+      <Footer />
     </main>
   )
 }

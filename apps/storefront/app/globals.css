@@ -345,6 +345,81 @@ button {
   }
 }
 
+.card-link {
+  display: block;
+}
+
+.site-footer {
+  align-items: center;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  display: flex;
+  font-size: 12px;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 48px;
+  padding: 24px 18px 36px;
+}
+
+.admin-gate {
+  color: transparent;
+  font-size: 10px;
+  opacity: 0.04;
+  transition: opacity 0.2s ease;
+}
+
+.admin-gate:hover,
+.admin-gate:focus-visible {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.product-detail {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  padding: 32px clamp(18px, 5vw, 72px) 12px;
+}
+
+.product-hero {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: block;
+  max-height: 520px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.product-hero.placeholder {
+  align-items: center;
+  background: var(--panel);
+  color: var(--muted);
+  display: flex;
+  justify-content: center;
+  min-height: 320px;
+}
+
+.product-copy h1 {
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.05;
+  margin: 8px 0 16px;
+}
+
+.detail-price {
+  font-size: 28px;
+  margin: 18px 0;
+}
+
+.variant-list {
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.variant-list ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
 @media (max-width: 680px) {
   .hero,
   .grid {
@@ -353,5 +428,9 @@ button {
 
   .nav-links {
     display: none;
+  }
+
+  .product-detail {
+    grid-template-columns: 1fr;
   }
 }

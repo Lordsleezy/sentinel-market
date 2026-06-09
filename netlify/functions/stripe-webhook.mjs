@@ -1,33 +1,36 @@
 import Stripe from "stripe"
-import { json, supabaseAdmin } from "./_supabase.mjs"
+import { json } from "./_http.mjs"
 
 const rawBody = (event) =>
   event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf8") : event.body || ""
 
 const saveCompletedOrder = async (session) => {
-  const productId = session.metadata?.product_id
+  const medusaCartId = session.metadata?.medusa_cart_id
+  const medusaProductId = session.metadata?.medusa_product_id
+  const medusaVariantId = session.metadata?.medusa_variant_id
 
-  if (!productId) {
-    throw new Error("Checkout session is missing product_id metadata")
+  if (!medusaCartId && !medusaProductId) {
+    throw new Error("Checkout session is missing Medusa metadata")
   }
 
-  const { data: product } = await supabaseAdmin()
-    .from("products")
-    .select("supplier")
-    .eq("id", productId)
-    .single()
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return
+  }
 
-  const { data: existingOrder } = await supabaseAdmin()
+  const { createClient } = await import("@supabase/supabase-js")
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+
+  const { data: existingOrder } = await supabase
     .from("orders")
     .select("id")
     .eq("customer->>stripe_session_id", session.id)
     .maybeSingle()
 
-  if (existingOrder) {
-    return
-  }
+  if (existingOrder) return
 
-  const { error } = await supabaseAdmin().from("orders").insert({
+  const { error } = await supabase.from("orders").insert({
     customer: {
       email: session.customer_details?.email || session.customer_email || null,
       name: session.customer_details?.name || null,
@@ -36,16 +39,17 @@ const saveCompletedOrder = async (session) => {
       payment_status: session.payment_status,
       amount_total: session.amount_total,
       currency: session.currency,
+      medusa_cart_id: medusaCartId || null,
+      medusa_product_id: medusaProductId || null,
+      medusa_variant_id: medusaVariantId || null,
     },
-    product_id: productId,
+    product_id: medusaProductId,
     status: "pending_manual_fulfillment",
-    supplier: product?.supplier || session.metadata?.supplier || "manual",
-    fulfillment_notes: `Stripe Checkout session ${session.id}`,
+    supplier: session.metadata?.supplier || "medusa",
+    fulfillment_notes: `Medusa cart ${medusaCartId || "n/a"} · Stripe session ${session.id}`,
   })
 
-  if (error) {
-    throw new Error(error.message)
-  }
+  if (error) throw new Error(error.message)
 }
 
 export const handler = async (event) => {
@@ -59,7 +63,6 @@ export const handler = async (event) => {
   const signature = event.headers["stripe-signature"] || event.headers["Stripe-Signature"]
 
   let stripeEvent
-
   try {
     stripeEvent = stripe.webhooks.constructEvent(rawBody(event), signature, process.env.STRIPE_WEBHOOK_SECRET)
   } catch (error) {

@@ -5,10 +5,12 @@ import { useState } from "react"
 
 type BuyButtonProps = {
   productId: string
+  variantId?: string | null
+  handle?: string
   disabled?: boolean
 }
 
-export function BuyButton({ productId, disabled = false }: BuyButtonProps) {
+export function BuyButton({ productId, variantId, handle, disabled = false }: BuyButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -22,7 +24,11 @@ export function BuyButton({ productId, disabled = false }: BuyButtonProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ product_id: productId }),
+        body: JSON.stringify({
+          product_id: productId,
+          variant_id: variantId,
+          handle,
+        }),
       })
       const payload = (await response.json()) as { url?: string; error?: string }
 
