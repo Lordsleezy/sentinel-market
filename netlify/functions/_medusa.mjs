@@ -46,14 +46,16 @@ export const medusaFetch = async (path, options = {}) => {
 export const getDefaultRegionId = async () => {
   if (regionId()) return regionId()
   const { regions } = await medusaFetch("/store/regions")
-  return regions?.[0]?.id || ""
+  if (!regions?.length) return ""
+  const usd = regions.find((r) => r.currency_code === "usd")
+  return (usd || regions[0]).id
 }
 
 const priceFromVariant = (variant) => {
   const calculated = variant?.calculated_price?.calculated_amount
-  if (typeof calculated === "number") return calculated
+  if (typeof calculated === "number") return calculated / 100
   const original = variant?.calculated_price?.original_amount
-  if (typeof original === "number") return original
+  if (typeof original === "number") return original / 100
   const price = variant?.prices?.[0]?.amount
   if (typeof price === "number") return price / 100
   return null
