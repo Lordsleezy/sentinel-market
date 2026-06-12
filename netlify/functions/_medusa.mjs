@@ -1,7 +1,7 @@
 import { json } from "./_http.mjs"
 
 const medusaUrl = () =>
-  (process.env.MEDUSA_API_URL || process.env.NEXT_PUBLIC_MEDUSA_API_URL || "https://legion.sentinelprime.org").replace(
+  (process.env.MEDUSA_API_URL || process.env.NEXT_PUBLIC_MEDUSA_API_URL || "http://136.118.148.167:9000").replace(
     /\/$/,
     "",
   )
@@ -9,7 +9,7 @@ const medusaUrl = () =>
 const publishableKey = () =>
   process.env.MEDUSA_PUBLISHABLE_KEY ||
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ||
-  "pk_4f2a7194ea759c0f8e4ac2eb8f9acc575acf9195e46d349f2a3f564eb6a59469"
+  "pk_328841e769dad23631dd3baf9616ac30c7c9dd9fd090cf5483ca2e949d97da28"
 
 const regionId = () => process.env.MEDUSA_REGION_ID || ""
 
