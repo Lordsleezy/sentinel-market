@@ -1,5 +1,5 @@
 [build]
-  command = "corepack enable && pnpm install --frozen-lockfile && corepack pnpm --filter @sentinel-market/storefront build"
+  command = "pnpm install --frozen-lockfile && pnpm --filter @sentinel-market/storefront build"
   publish = "apps/storefront/.next"
   functions = "netlify/functions"
 
