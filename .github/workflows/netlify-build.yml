@@ -1,0 +1,44 @@
+name: Netlify Build Check
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build storefront
+        run: corepack pnpm --filter @sentinel-market/storefront build
+        env:
+          MEDUSA_API_URL: http://136.118.148.167:9000
+          MEDUSA_PUBLISHABLE_KEY: pk_328841e769dad23631dd3baf9616ac30c7c9dd9fd090cf5483ca2e949d97da28
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_328841e769dad23631dd3baf9616ac30c7c9dd9fd090cf5483ca2e949d97da28
+          MEDUSA_REGION_ID: reg_01KTXBQPQZ05SY3X429VE5850G
+          NEXT_PUBLIC_SITE_URL: https://market.sentinelprime.org
+          NEXT_PUBLIC_API_BASE_URL: https://market.sentinelprime.org/.netlify/functions
+
+      - name: Netlify build (plugin)
+        run: npx netlify build
+        env:
+          MEDUSA_API_URL: http://136.118.148.167:9000
+          MEDUSA_PUBLISHABLE_KEY: pk_328841e769dad23631dd3baf9616ac30c7c9dd9fd090cf5483ca2e949d97da28
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_328841e769dad23631dd3baf9616ac30c7c9dd9fd090cf5483ca2e949d97da28
+          MEDUSA_REGION_ID: reg_01KTXBQPQZ05SY3X429VE5850G
+          NEXT_PUBLIC_SITE_URL: https://market.sentinelprime.org
+          NEXT_PUBLIC_API_BASE_URL: https://market.sentinelprime.org/.netlify/functions
